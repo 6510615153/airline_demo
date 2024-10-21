@@ -6,6 +6,7 @@ from .models import Airport, Flight, Passenger
 
 class FlightViewTestCase(TestCase):
 
+    # We use setup as a base for test case
     def setUp(self):
         # create airports
         airport1 = Airport.objects.create(code="AAA", city="City A")
@@ -62,3 +63,15 @@ class FlightViewTestCase(TestCase):
         c.post(reverse('flights:book', args=(f.id,)),
                {'passenger': passenger.id})
         self.assertEqual(f.passengers.count(), 1)
+
+    def test_available_seat_flight(self):
+        """ seat is available"""
+
+        passenger = Passenger.objects.create(
+            first="hemione", last="granger")
+        f = Flight.objects.first()
+
+        c = Client()
+        c.post(reverse('flights:book', args=(f.id,)),
+               {'passenger': passenger.id})
+        self.assertEqual(f.passengers.count(), 2)
